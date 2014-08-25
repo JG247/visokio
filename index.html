@@ -13,7 +13,6 @@
     <!--&lt;!&ndash; Latest compiled and minified JavaScript &ndash;&gt;-->
     <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>-->
     <script type="text/javascript">
-
         var data = [{
             "country": "USA",
             "visits": 2025
@@ -23,79 +22,67 @@
         }, {
             "country": "Japan",
             "visits": 1809
-        }, {
-            "country": "Germany",
-            "visits": 1322
-        }, {
-            "country": "UK",
-            "visits": 1122
-        }, {
-            "country": "France",
-            "visits": 1114
-        }, {
-            "country": "India",
-            "visits": 984
-        }, {
-            "country": "Spain",
-            "visits": 711
-        }, {
-            "country": "Netherlands",
-            "visits": 665
-        }, {
-            "country": "Russia",
-            "visits": 580
-        }, {
-            "country": "South Korea",
-            "visits": 443
-        }, {
-            "country": "Canada",
-            "visits": 441
-        }, {
-            "country": "Brazil",
-            "visits": 395
         }];
-
-        var chart = AmCharts.makeChart("chartdiv", {
-            "type": "serial",
-            "theme": "none",
-            "dataProvider": data,
-            "valueAxes": [{
-                "gridColor":"#FFFFFF",
-                "gridAlpha": 0.2,
-                "dashLength": 0
-            }],
-            "gridAboveGraphs": true,
-            "startDuration": 1,
-            "graphs": [{
-                "balloonText": "[[category]]: <b>[[value]]</b>",
-                "fillAlphas": 0.8,
-                "lineAlpha": 0.2,
-                "type": "column",
-                "valueField": "visits"
-            }],
-            "chartCursor": {
-                "categoryBalloonEnabled": false,
-                "cursorAlpha": 0,
-                "zoomable": false
-            },
-            "categoryField": "country",
-            "categoryAxis": {
-                "gridPosition": "start",
-                "gridAlpha": 0,
-                "tickPosition":"start",
-                "tickLength":20
-            },
-            "exportConfig":{
-                "menuTop": 0,
-                "menuItems": [{
-                    "icon": '/lib/3/images/export.png',
-                    "format": 'png'
-                }]
+        function createChart(data){
+            this.data = data;
+            var chart = AmCharts.makeChart("chartdiv", {
+                "type": "serial",
+                "theme": "none",
+                "dataProvider": data,
+                "valueAxes": [{
+                    "gridColor":"#FFFFFF",
+                    "gridAlpha": 0.2,
+                    "dashLength": 0
+                }],
+                "gridAboveGraphs": true,
+                "startDuration": 1,
+                "graphs": [{
+                    "balloonText": "[[category]]: <b>[[value]]</b>",
+                    "fillAlphas": 0.8,
+                    "lineAlpha": 0.2,
+                    "type": "column",
+                    "valueField": "visits"
+                }],
+                "chartCursor": {
+                    "categoryBalloonEnabled": false,
+                    "cursorAlpha": 0,
+                    "zoomable": false
+                },
+                "categoryField": "country",
+                "categoryAxis": {
+                    "gridPosition": "start",
+                    "gridAlpha": 0,
+                    "tickPosition":"start",
+                    "tickLength":20
+                },
+                "exportConfig":{
+                    "menuTop": 0,
+                    "menuItems": [{
+                        "icon": '/lib/3/images/export.png',
+                        "format": 'png'
+                    }]
+                }
+            });
+        }
+        createChart(data);
+        var newCountry = $('#newCountry').value;
+        function addData(data){
+            this.data = data;
+            var newCountry = $('#newCountry').val(),
+            newVisit = $('#newVisit').val();
+            if (newCountry != "" && newVisit != "") {
+                data.push({"country": newCountry, "visits": newVisit});
+                document.getElementById("addData").reset();
+                createChart(data);
+            } else if (newCountry == "" && newVisit == ""){
+                $('#newVisitWarning').show();
+                $('#newCountryWarning').show();
+            } else if (newCountry == "" || newVisit != "") {
+                $('#newCountryWarning').show();
+            } else {
+                $('#newVisitWarning').show();
             }
-        });
-
-         
-
+        }
     </script>
 </head>
 <body>
@@ -103,6 +90,23 @@
     <div class="row">
         <div class="col-md-12">
             <div id="chartdiv" style="width: 100%; height: 500px;"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <form id="addData" role="form">
+                <div class="form-group">
+                    <label for="newCountry">Country</label> <span style="display:none; color:red;" id="newCountryWarning" class="glyphicon glyphicon-warning-sign">required!</span>
+                    <input type="text" required class="form-control" id="newCountry" placeholder="Enter country">
+                </div>
+                <div class="form-group">
+                    <label for="newVisit">Visits per month</label> <span style="display:none; color:red;" id="newVisitWarning" class="glyphicon glyphicon-warning-sign">required!</span>
+                    <input type="number" required class="form-control" id="newVisit" placeholder="Enter number of visits">
+                </div>
+                <button type="button" class="btn btn-default btn-group-justified" onclick="addData(data)">
+                    <span class="glyphicon glyphicon-plus"></span> Add data
+                </button>
+            </form>
         </div>
     </div>
 </div>
