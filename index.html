@@ -6,83 +6,14 @@
     <script type="text/javascript" src="http://www.amcharts.com/lib/3/serial.js"></script>
     <script type="text/javascript" src="http://www.amcharts.com/lib/3/themes/none.js"></script>
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://e81cf1b7627421eef53b-8c75456dc097df68b1c8f38ec2c58d11.r81.cf3.rackcdn.com/createChart.js"></script>
+    <script src="http://e81cf1b7627421eef53b-8c75456dc097df68b1c8f38ec2c58d11.r81.cf3.rackcdn.com/dataVar.js"></script>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <!-- Optional theme -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <!--&lt;!&ndash; Latest compiled and minified JavaScript &ndash;&gt;-->
     <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>-->
-    <script type="text/javascript">
-        var data = [{
-            "country": "USA",
-            "visits": 2025
-        }, {
-            "country": "China",
-            "visits": 1882
-        }, {
-            "country": "Japan",
-            "visits": 1809
-        }];
-        function createChart(data){
-            this.data = data;
-            var chart = AmCharts.makeChart("chartdiv", {
-                "type": "serial",
-                "theme": "none",
-                "dataProvider": data,
-                "valueAxes": [{
-                    "gridColor":"#FFFFFF",
-                    "gridAlpha": 0.2,
-                    "dashLength": 0
-                }],
-                "gridAboveGraphs": true,
-                "startDuration": 1,
-                "graphs": [{
-                    "balloonText": "[[category]]: <b>[[value]]</b>",
-                    "fillAlphas": 0.8,
-                    "lineAlpha": 0.2,
-                    "type": "column",
-                    "valueField": "visits"
-                }],
-                "chartCursor": {
-                    "categoryBalloonEnabled": false,
-                    "cursorAlpha": 0,
-                    "zoomable": false
-                },
-                "categoryField": "country",
-                "categoryAxis": {
-                    "gridPosition": "start",
-                    "gridAlpha": 0,
-                    "tickPosition":"start",
-                    "tickLength":20
-                },
-                "exportConfig":{
-                    "menuTop": 0,
-                    "menuItems": [{
-                        "icon": '/lib/3/images/export.png',
-                        "format": 'png'
-                    }]
-                }
-            });
-        }
-        createChart(data);
-        function addData(data){
-            this.data = data;
-            var newCountry = $('#newCountry').val(),
-            newVisit = $('#newVisit').val();
-            if (newCountry != "" && newVisit != "") {
-                data.push({"country": newCountry, "visits": newVisit});
-                document.getElementById("addData").reset();
-                createChart(data);
-            } else if (newCountry == "" && newVisit == ""){
-                $('#newVisitWarning').show();
-                $('#newCountryWarning').show();
-            } else if (newCountry == "" || newVisit != "") {
-                $('#newCountryWarning').show();
-            } else {
-                $('#newVisitWarning').show();
-            }
-        }
-    </script>
 </head>
 <body>
 <div class="container">
@@ -92,7 +23,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <form id="addData" role="form">
                 <div class="form-group">
                     <label for="newCountry">Country</label> <span style="display:none; color:red;" id="newCountryWarning" class="glyphicon glyphicon-warning-sign">required!</span>
@@ -107,7 +38,68 @@
                 </button>
             </form>
         </div>
+        <div class="col-md-6">
+            <form id="removeData" role="form">
+                <div class="form-group">
+                    <label>Remove data</label>
+                    <select required class="form-control" id="dataToRemove" placeholder="Enter country">
+                        <option disabled>Select data to remove</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-default btn-group-justified" onclick="removeData()">
+                    <span class="glyphicon glyphicon-remove"></span> Remove data
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 </body>
+<script type="text/javascript">
+    
+    updateView(data);
+    function addData(data){
+        this.data = data;
+        var newCountry = $('#newCountry').val(),
+                newVisit = $('#newVisit').val();
+        if (newCountry != "" && newVisit != "") {
+            data.push({"country": newCountry, "visits": newVisit});
+            document.getElementById("addData").reset();
+            updateView(data);
+        } else if (newCountry == "" && newVisit == ""){
+            $('#newVisitWarning').show();
+            $('#newCountryWarning').show();
+        } else if (newCountry == "" || newVisit != "") {
+            $('#newCountryWarning').show();
+        } else {
+            $('#newVisitWarning').show();
+        }
+    }
+    function populateSelectOptions(data){
+        $('#dataToRemove [item-position]').remove();
+        this.data = data;
+        for (var i =0; i < data.length; i++){
+            console.log(data[i]);
+            $('#dataToRemove').append("<option item-position='" + i + "' value='" + i + "'>" + data[i].country  + "</option>");
+        }
+    }
+    populateSelectOptions(data);
+    function removeData (){
+        var rmData = $('#dataToRemove').val();
+        console.log(rmData);
+        if (rmData != null && rmData != "" && rmData != undefined){
+            if (rmData == 0){
+                data.splice(rmData,rmData + 1 );
+                updateView(data);
+            } else if (rmData > 0) {
+                data.splice(rmData,rmData);
+                updateView(data);
+            }
+        }
+    }
+    function updateView(data) {
+        this.data = data;
+        createChart(data);
+        populateSelectOptions(data);
+    }
+</script>
 </html>
