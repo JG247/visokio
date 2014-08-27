@@ -4,58 +4,69 @@
     <title>Visokio</title>
     <script type="text/javascript" src="http://www.amcharts.com/lib/3/amcharts.js"></script>
     <script type="text/javascript" src="http://www.amcharts.com/lib/3/serial.js"></script>
+    <script type="text/javascript" src="http://www.amcharts.com/lib/3/pie.js"></script>
     <script type="text/javascript" src="http://www.amcharts.com/lib/3/themes/none.js"></script>
+    <script type="text/javascript" src="http://www.amcharts.com/lib/3/funnel.js"></script>
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script src="http://e81cf1b7627421eef53b-8c75456dc097df68b1c8f38ec2c58d11.r81.cf3.rackcdn.com/createChart.js"></script>
+    <script src="http://e81cf1b7627421eef53b-8c75456dc097df68b1c8f38ec2c58d11.r81.cf3.rackcdn.com/createChart2.js"></script>
     <script src="http://e81cf1b7627421eef53b-8c75456dc097df68b1c8f38ec2c58d11.r81.cf3.rackcdn.com/dataVar.js"></script>
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <!-- Optional theme -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-    <!--&lt;!&ndash; Latest compiled and minified JavaScript &ndash;&gt;-->
-    <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>-->
 </head>
 <body>
 <div class="container">
     <div class="row">
-        <div class="col-md-12">
-            <div id="chartdiv" style="width: 100%; height: 500px;"></div>
+        <div class="col-md-6">
+            <div id="barchart" style="width: 100%; height: 200px;"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="funneldiv" style="width: 100%; height: 200px;"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div id="chartdiv" style="width: 100%; height: 200px;"></div>
+        </div>
+        <div class="col-md-6">
+            <div id="serialdiv" style="width: 100%; height: 200px;"></div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-6">
             <form id="addData" role="form">
                 <div class="form-group">
-                    <label for="newCountry">Country</label> <span style="display:none; color:red;" id="newCountryWarning" class="glyphicon glyphicon-warning-sign">required!</span>
+                    <button type="button" class="btn btn-default btn-group-justified" onclick="addData(data)">
+                        <span class="glyphicon glyphicon-plus"></span> Add
+                    </button>
+                </div>
+                <div class="form-group">
                     <input type="text" required class="form-control" id="newCountry" placeholder="Enter country">
                 </div>
                 <div class="form-group">
-                    <label for="newVisit">Visits per month</label> <span style="display:none; color:red;" id="newVisitWarning" class="glyphicon glyphicon-warning-sign">required!</span>
                     <input type="number" required class="form-control" id="newVisit" placeholder="Enter number of visits">
                 </div>
-                <button type="button" class="btn btn-default btn-group-justified" onclick="addData(data)">
-                    <span class="glyphicon glyphicon-plus"></span> Add data
-                </button>
             </form>
         </div>
         <div class="col-md-6">
             <form id="removeData" role="form">
                 <div class="form-group">
-                    <label>Remove data</label>
+                    <button type="button" class="btn btn-default btn-group-justified" onclick="removeData()">
+                        <span class="glyphicon glyphicon-remove"></span> Delete
+                    </button>
+                </div>
+                <div class="form-group">
                     <select required class="form-control" id="dataToRemove" placeholder="Enter country">
                         <option disabled>Select data to remove</option>
                     </select>
                 </div>
-                <button type="button" class="btn btn-default btn-group-justified" onclick="removeData()">
-                    <span class="glyphicon glyphicon-remove"></span> Remove data
-                </button>
             </form>
         </div>
     </div>
 </div>
 </body>
 <script type="text/javascript">
-    
     updateView(data);
     function addData(data){
         this.data = data;
@@ -65,13 +76,6 @@
             data.push({"country": newCountry, "visits": newVisit});
             document.getElementById("addData").reset();
             updateView(data);
-        } else if (newCountry == "" && newVisit == ""){
-            $('#newVisitWarning').show();
-            $('#newCountryWarning').show();
-        } else if (newCountry == "" || newVisit != "") {
-            $('#newCountryWarning').show();
-        } else {
-            $('#newVisitWarning').show();
         }
     }
     function populateSelectOptions(data){
@@ -86,13 +90,17 @@
     function removeData (){
         var rmData = $('#dataToRemove').val();
         console.log(rmData);
-        if (rmData != null && rmData != "" && rmData != undefined){
+        if (rmData != null && rmData != "" && rmData != undefined ){
             if (rmData == 0){
                 data.splice(rmData,rmData + 1 );
-                updateView(data);
+                if (data.length != 0 ){
+                    updateView(data);
+                }
             } else if (rmData > 0) {
                 data.splice(rmData,rmData);
-                updateView(data);
+                if (data.length != 0 ){
+                    updateView(data);
+                }
             }
         }
     }
