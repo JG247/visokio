@@ -14,8 +14,24 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <!-- Optional theme -->
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <style>
+        #header-row, #footer-row {
+            background-color: #022b70;
+            color: #ffffff;
+        }
+    </style>
 </head>
 <body>
+<div class="row" id="header-row">
+    <div class="col-md-12">
+        <div class="container">
+            <div id="header">
+                <h1>Visokio</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div class="row">
         <div class="col-md-6">
@@ -65,43 +81,91 @@
         </div>
     </div>
 </div>
+<div class="row" id="footer-row">
+    <div class="col-md-12">
+        <div class="container">
+            <h4 id="status"></h4>
+        </div>
+    </div>
+</div>
 </body>
 <script type="text/javascript">
+    var options = {
+        selectors: {
+            country: '#newCountry',
+            visits: '#newVisit',
+            status: '#status',
+            dataRm: '#dataToRemove'
+        },
+        text: {
+            txt1: 'Please select a country and enter the number of visits.',
+            txt2: 'Please select a country.',
+            txt3: 'Please enter the number of visits.',
+            txt4: 'You can not delete anymore entries. You must have at least one entry.',
+            txt5: 'You can not delete anymore entries. You must have at least one entry.',
+            txt6: 'Please select a country to delete.'
+        }
+    };
+    var o = this.options;
+    function updateStatusAdd(){
+        var newCountry = $(o.selectors.country).val(),
+                newVisit = $(o.selectors.visits).val();
+        if(newCountry == "" && newVisit == ""){
+            $(o.selectors.status).empty();
+            $(o.selectors.status).append(o.text.txt1);
+        } else if(newCountry == "" && newVisit != ""){
+            $(o.selectors.status).empty();
+            $(o.selectors.status).append(o.text.txt2);
+        } else if (newCountry != "" && newVisit == ""){
+            $(o.selectors.status).empty();
+            $(o.selectors.status).append(o.text.txt3);
+        }
+    }
     updateView(data);
+    updateStatusAdd()
     function addData(data){
         this.data = data;
-        var newCountry = $('#newCountry').val(),
-                newVisit = $('#newVisit').val();
+        var newCountry = $(o.selectors.country).val(),
+                newVisit = $(o.selectors.visits).val();
         if (newCountry != "" && newVisit != "") {
             data.push({"country": newCountry, "visits": newVisit});
             document.getElementById("addData").reset();
             updateView(data);
         }
+        updateStatusAdd();
     }
     function populateSelectOptions(data){
         $('#dataToRemove [item-position]').remove();
         this.data = data;
         for (var i =0; i < data.length; i++){
             console.log(data[i]);
-            $('#dataToRemove').append("<option item-position='" + i + "' value='" + i + "'>" + data[i].country  + "</option>");
+            $(o.selectors.dataRm).append("<option item-position='" + i + "' value='" + i + "'>" + data[i].country  + "</option>");
         }
     }
     populateSelectOptions(data);
     function removeData (){
-        var rmData = $('#dataToRemove').val();
-        console.log(rmData);
+        var rmData = $(o.selectors.dataRm).val();
         if (rmData != null && rmData != "" && rmData != undefined ){
             if (rmData == 0){
                 data.splice(rmData,rmData + 1 );
                 if (data.length != 0 ){
                     updateView(data);
+                } else {
+                    $(o.selectors.status).empty();
+                    $(o.selectors.status).append(o.text.txt4);
                 }
             } else if (rmData > 0) {
                 data.splice(rmData,rmData);
                 if (data.length != 0 ){
                     updateView(data);
+                } else {
+                    $(o.selectors.status).empty();
+                    $(o.selectors.status).append(o.text.txt5);
                 }
             }
+        } else {
+            $(o.selectors.status).empty();
+            $(o.selectors.status).append(o.text.txt6);
         }
     }
     function updateView(data) {
