@@ -122,7 +122,7 @@
         }
     }
     updateView(data);
-    updateStatusAdd()
+    updateStatusAdd();
     function addData(data){
         this.data = data;
         var newCountry = $(o.selectors.country).val(),
@@ -147,16 +147,19 @@
         var rmData = $(o.selectors.dataRm).val();
         if (rmData != null && rmData != "" && rmData != undefined ){
             if (rmData == 0){
-                data.splice(rmData,rmData + 1 );
-                if (data.length != 0 ){
+//                data.splice(rmData,rmData + 1 );
+                var dataLength = data.length -1;
+                if (dataLength != 0 ){
+                    data.splice(rmData,rmData + 1 );
                     updateView(data);
                 } else {
                     $(o.selectors.status).empty();
                     $(o.selectors.status).append(o.text.txt4);
                 }
             } else if (rmData > 0) {
-                data.splice(rmData,rmData);
+                var dataLength = data.length -1;
                 if (data.length != 0 ){
+                    data.splice(rmData,rmData);
                     updateView(data);
                 } else {
                     $(o.selectors.status).empty();
