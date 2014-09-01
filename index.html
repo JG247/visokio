@@ -16,13 +16,13 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     <style>
         #header-row, #footer-row {
-            background-color: #022b70;
+            background-color: #2b669a;
             color: #ffffff;
         }
     </style>
 </head>
 <body>
-<div class="row" id="header-row">
+<div class="row primary" id="header-row">
     <div class="col-md-12">
         <div class="container">
             <div id="header">
@@ -50,7 +50,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <form id="addData" role="form">
                 <div class="form-group">
                     <button type="button" class="btn btn-primary btn-group-justified" onclick="addData(data)">
@@ -65,7 +65,31 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            <form id="editData" role="form">
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary btn-group-justified" onclick="addEditedData()">
+                        <span class="glyphicon glyphicon-pencil"></span> Update
+                    </button>
+                </div>
+                <div class="form-group">
+                    <select required class="form-control" id="dataToEdit" placeholder="Enter country">
+                        <option disabled>Select data to edit</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input id="updateCountry" class="form-control" type="text" placeholder="Update country name">
+                        </div>
+                        <div class="col-md-6">
+                            <input id="updateVisits" class="form-control" type="number" placeholder="Update visits">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
             <form id="removeData" role="form">
                 <div class="form-group">
                     <button type="button" class="btn btn-danger btn-group-justified" onclick="removeData()">
@@ -92,90 +116,95 @@
 <script type="text/javascript">
     var options = {
         selectors: {
-            country: '#newCountry',
-            visits: '#newVisit',
-            status: '#status',
-            dataRm: '#dataToRemove'
+            country: '#newCountry', visits: '#newVisit', status: '#status',
+            dataRm: '#dataToRemove',dataEdit: '#dataToEdit',editCountry: '#editCountry',
+            editVisits: '#editVisits',count: '#counter',upCountry: '#updateCountry',
+            upVisits: '#updateVisits', editForm: '#editData'
         },
         text: {
             txt1: 'Please select a country and enter the number of visits.',
             txt2: 'Please select a country.',
             txt3: 'Please enter the number of visits.',
             txt4: 'You can not delete anymore entries. You must have at least one entry.',
-            txt5: 'You can not delete anymore entries. You must have at least one entry.',
-            txt6: 'Please select a country to delete.'
+            txt5: 'Please select a country to delete.',
+            txt6 : 'Please rename the country and enter the number of visits'
         }
     };
     var o = this.options;
-    function updateStatusAdd(){
-        var newCountry = $(o.selectors.country).val(),
-                newVisit = $(o.selectors.visits).val();
-        if(newCountry == "" && newVisit == ""){
-            $(o.selectors.status).empty();
-            $(o.selectors.status).append(o.text.txt1);
-        } else if(newCountry == "" && newVisit != ""){
-            $(o.selectors.status).empty();
-            $(o.selectors.status).append(o.text.txt2);
-        } else if (newCountry != "" && newVisit == ""){
-            $(o.selectors.status).empty();
-            $(o.selectors.status).append(o.text.txt3);
-        }
-    }
     updateView(data);
-    updateStatusAdd();
     function addData(data){
         this.data = data;
-        var newCountry = $(o.selectors.country).val(),
-                newVisit = $(o.selectors.visits).val();
+        var newCountry = $(o.selectors.country).val(),newVisit = $(o.selectors.visits).val();
         if (newCountry != "" && newVisit != "") {
             data.push({"country": newCountry, "visits": newVisit});
-            document.getElementById("addData").reset();
             updateView(data);
+            document.getElementById("addData").reset();
+        } else {
+            setStatus(o.text.txt1)
         }
-        updateStatusAdd();
     }
     function populateSelectOptions(data){
         $('#dataToRemove [item-position]').remove();
         this.data = data;
         for (var i =0; i < data.length; i++){
-            console.log(data[i]);
             $(o.selectors.dataRm).append("<option item-position='" + i + "' value='" + i + "'>" + data[i].country  + "</option>");
         }
     }
     populateSelectOptions(data);
+    function addEditedData(){
+        var dataEdit = $(o.selectors.dataEdit).val(),
+                newCountry = $(o.selectors.upCountry).val(),
+                newVisits = $(o.selectors.upVisits).val();
+        if (dataEdit != null && dataEdit != "" && dataEdit != undefined ){
+            if ( newCountry != "" && newVisits != "") {
+                data[dataEdit] = {"country" : newCountry , "visits" : newVisits};
+                updateView(data);
+                document.getElementById('editData').reset();
+            } else {
+                setStatus(o.text.txt6)
+            }
+        } else {
+            setStatus(o.text.txt2)
+        }
+    }
+    function populateEditableData(data){
+        $('#dataToEdit [item-position]').remove();
+        this.data = data;
+        for (var i =0; i < data.length; i++){
+            $(o.selectors.dataEdit).append("<option item-position='" + i + "' value='" + i + "'>" + data[i].country + ' - '+  data[i].visits + ' visits' +"</option>");
+        }
+    }
+    populateEditableData(data);
     function removeData (){
-        var rmData = $(o.selectors.dataRm).val();
+        var dataLength = data.length - 1, rmData = $(o.selectors.dataRm).val();
         if (rmData != null && rmData != "" && rmData != undefined ){
             if (rmData == 0){
-//                data.splice(rmData,rmData + 1 );
-                var dataLength = data.length -1;
                 if (dataLength != 0 ){
                     data.splice(rmData,rmData + 1 );
                     updateView(data);
                 } else {
-                    $(o.selectors.status).empty();
-                    $(o.selectors.status).append(o.text.txt4);
+                    setStatus(o.text.txt4)
                 }
             } else if (rmData > 0) {
-                var dataLength = data.length -1;
                 if (data.length != 0 ){
                     data.splice(rmData,rmData);
                     updateView(data);
                 } else {
-                    $(o.selectors.status).empty();
-                    $(o.selectors.status).append(o.text.txt5);
+                    setStatus(o.text.txt4)
                 }
             }
         } else {
-            $(o.selectors.status).empty();
-            $(o.selectors.status).append(o.text.txt6);
+            setStatus(o.text.txt5)
         }
+    }
+    function setStatus(status){
+        $(o.selectors.status).empty().append(status);
     }
     function updateView(data) {
         this.data = data;
         createChart(data);
         populateSelectOptions(data);
+        populateEditableData(data);
     }
 </script>
-
 </html>
